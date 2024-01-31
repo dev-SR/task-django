@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "users",  # new
     'rest_framework',
     'rest_framework.authtoken',
+    "tasks",
 ]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
