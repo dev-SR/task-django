@@ -1,30 +1,33 @@
 # Task
 
 - [Task](#task)
-	- [Project Setup Guide](#project-setup-guide)
-		- [Prerequisites](#prerequisites)
-		- [Environment Variables](#environment-variables)
-		- [Setting Up Virtual Environment](#setting-up-virtual-environment)
-		- [Database Setup](#database-setup)
-		- [Running the Server](#running-the-server)
-	- [API Documentation](#api-documentation)
-		- [User Authentication](#user-authentication)
-			- [Register User](#register-user)
-			- [Login and Get Token](#login-and-get-token)
-		- [CRUD Operations for Tasks (Bearer Token Authentication)](#crud-operations-for-tasks-bearer-token-authentication)
-	- [CRUD Operations for Tasks (Bearer Token Authentication)](#crud-operations-for-tasks-bearer-token-authentication-1)
-			- [Retrieve List of Tasks](#retrieve-list-of-tasks)
-			- [Create a New Task](#create-a-new-task)
-			- [Retrieve Task Details](#retrieve-task-details)
-			- [Update Task](#update-task)
-			- [Delete Task](#delete-task)
+  - [Project Setup Guide](#project-setup-guide)
+    - [0. Prerequisites](#0-prerequisites)
+    - [1. Environment Variables](#1-environment-variables)
+    - [2. Setting Up Virtual Environment](#2-setting-up-virtual-environment)
+    - [3. Database Migration](#3-database-migration)
+    - [4. Running the Server](#4-running-the-server)
+    - [Seed Database with Fake Data Script (Optional)](#seed-database-with-fake-data-script-optional)
+  - [API Documentation](#api-documentation)
+    - [User Authentication](#user-authentication)
+      - [Register User](#register-user)
+      - [Login and Get Token](#login-and-get-token)
+    - [CRUD Operations for Tasks (Bearer Token Authentication)](#crud-operations-for-tasks-bearer-token-authentication)
+  - [CRUD Operations for Tasks (Bearer Token Authentication)](#crud-operations-for-tasks-bearer-token-authentication-1)
+      - [Retrieve List of Tasks](#retrieve-list-of-tasks)
+      - [Create a New Task](#create-a-new-task)
+      - [Retrieve Task Details](#retrieve-task-details)
+      - [Update Task](#update-task)
+      - [Delete Task](#delete-task)
 
 ## Project Setup Guide
 
-### Prerequisites
+The project is built with `Django + TailwindCSS + HTMX`.
+
+### 0. Prerequisites
 - Ensure you have `pipenv` and `node.js` installed on your computer.
 
-### Environment Variables
+### 1. Environment Variables
 1. Copy the content of `.env.example`.
 
 2. Create a new file named `.env` in the project root.
@@ -33,7 +36,7 @@
 
 4. Replace `your_secret_key` with your actual secret key and `db_url_string` with a valid PostgreSQL database URL (e.g., `postgresql://username:password@host:port/database`).
 
-### Setting Up Virtual Environment
+### 2. Setting Up Virtual Environment
 1. Create a virtual environment folder named `.venv`:
     ```bash
     mkdir .venv
@@ -50,7 +53,7 @@
     pipenv install
     ```
 
-### Database Setup
+### 3. Database Migration
 
 1. Run migrations:
     ```bash
@@ -63,7 +66,7 @@
     python manage.py createsuperuser --username <username> --email <email>
     ```
 
-### Running the Server
+### 4. Running the Server
 
 Run the Django development server:
 ```bash
@@ -72,6 +75,20 @@ python manage.py runserver
 ```
 
 Now you can access the Django admin interface at `http://localhost:8000/admin/` and your application at `http://localhost:8000/`
+
+Optionally. run tailwindcss dev server with: `pnpm dev:css`
+
+
+### Seed Database with Fake Data Script (Optional)
+
+To seed the database with fake data, run the following command:
+
+```bash
+python manage.py runscript run_seed
+```
+
+This command executes the script `tasks\scripts\run_seed.py`  that creates random tasks and associated photos for each user in the database. The number of tasks per user is set to `30`, but you can adjust it as needed.
+
 
 ## API Documentation
 
