@@ -10,6 +10,7 @@
                         <i class="fa-solid fa-plus"></i>
                         <span>Add Task</span>
                     </a>
+                    {% include 'tasks/task_filter_form.html' %}
                 </div>
             </div>
             <div id="task-list">{% include 'tasks/table/ssr_table.html' %}</div>
