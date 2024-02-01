@@ -11,6 +11,7 @@ from .models import Task
 class TaskList(LoginRequiredMixin, ListView):
     model = Task
     login_url = '/users/login/'
+    paginate_by = 5
 
 
 class TaskDetailView(LoginRequiredMixin, DetailView):

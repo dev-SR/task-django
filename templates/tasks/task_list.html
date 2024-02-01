@@ -13,7 +13,10 @@
                     {% include 'tasks/task_filter_form.html' %}
                 </div>
             </div>
-            <div id="task-list">{% include 'tasks/table/ssr_table.html' %}</div>
+            <div id="task-list">
+                {% include 'tasks/table/ssr_table.html' %}
+                {% include 'tasks/pagination/ssr_pagination.html' %}
+            </div>
         </div>
     </div>
 </main>
