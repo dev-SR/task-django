@@ -10,7 +10,7 @@ class CustomLoginView(LoginView):
     redirect_authenticated_user = True
 
     def get_success_url(self) -> str:
-        return reverse_lazy("index")
+        return reverse_lazy("task-list")
 
 
 class CustomRegisterView(FormView):
@@ -19,7 +19,7 @@ class CustomRegisterView(FormView):
     redirect_authenticated_user = True
 
     def get_success_url(self) -> str:
-        return reverse_lazy("index")
+        return reverse_lazy("task-list")
 
     def form_valid(self, form):
         user = form.save()
@@ -29,5 +29,5 @@ class CustomRegisterView(FormView):
 
     def get(self, *args, **kwargs):
         if self.request.user.is_authenticated:
-            return redirect("index")
+            return redirect("task-list")
         return super(CustomRegisterView, self).get(*args, **kwargs)
