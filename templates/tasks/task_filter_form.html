@@ -1,4 +1,9 @@
 <form id="filter-form"
+      hx-get="{% url 'task-list' %}"
+      hx-target="#task-list"
+      hx-trigger="keyup changed delay:250ms from:#search_title, change from:#filter_creation_date, change from:#filter_due_date, change from:#filter_priority, change from:#filter_complete, change from:#paginate_by"
+      hx-push-url="true"
+      hx-indicator="#loading-indicator"
       class="flex space-x-2 items-center"
       autocomplete="off">
         <input type="text"

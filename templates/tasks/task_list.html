@@ -1,7 +1,8 @@
 {% extends "_base.html" %}
 {% block content %}
     <main class="flex flex-col min-h-screen dark:bg-gray-900">
-        <div class="p-8">
+        <div class="p-8 flex flex-col space-y-4">
+            <div id="loading-indicator" class="htmx-indicator">{% include 'partials/loading_indicator.html' %}</div>
             <div class="flex items-center justify-between w-full">
                 <h2 class="text-xl font-bold dark:text-white">Tasks</h2>
                 <div class="flex space-x-2">
