@@ -1,12 +1,16 @@
+from django.contrib.auth.decorators import login_required
 from django import forms
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from django.views.generic.list import ListView
+from django.contrib import messages
 from django.core.paginator import Paginator
-from django.shortcuts import render
-from .models import Task
+from django.shortcuts import get_object_or_404, render
+from django.urls import reverse, reverse_lazy
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import (CreateView, DeleteView, FormMixin,
+                                       UpdateView)
+from django.views.generic.list import ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+from .models import Photo, Task
 
 
 class TaskList(LoginRequiredMixin, ListView):
@@ -80,9 +84,45 @@ class TaskList(LoginRequiredMixin, ListView):
         return render(request, 'tasks/table/htmx_table.html', context)
 
 
-class TaskDetailView(LoginRequiredMixin, DetailView):
+class PhotoForm(forms.ModelForm):
+    class Meta:
+        model = Photo
+        fields = ['caption', 'image']
+
+
+class TaskDetailView(LoginRequiredMixin, FormMixin, DetailView):
     login_url = '/users/login/'
     model = Task
+    form_class = PhotoForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.get_form()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()  # !Important as it is used in form validation process,get_success_url
+        form = self.get_form()
+
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        photo = form.save(commit=False)
+        photo.task = self.get_object()
+        photo.save()
+
+        messages.success(self.request, 'Photo added successfully!')
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Error adding photo. Please check the form.')
+        return super().form_invalid(form)
+
+    def get_success_url(self):
+        return reverse("task-detail", kwargs={"pk": self.object.pk})
 
 
 class CreateTaskView(LoginRequiredMixin, CreateView):
@@ -121,3 +161,15 @@ class DeleteTaskView(LoginRequiredMixin, DeleteView):
     model = Task
     success_url = reverse_lazy('task-list')
     login_url = '/users/login/'
+
+
+@login_required
+def delete_photo(request, photo_id, task_id):
+    photo = get_object_or_404(Photo, id=photo_id)
+    photo.delete()
+
+    task = get_object_or_404(Task, id=task_id)
+    context = {
+        'object': task,
+    }
+    return render(request, 'tasks/image_grid.html', context)
