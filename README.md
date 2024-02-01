@@ -1,190 +1,148 @@
-# Django + TailwindCSS + HTMX
+# Task
 
+- [Task](#task)
+	- [Project Setup Guide](#project-setup-guide)
+		- [Prerequisites](#prerequisites)
+		- [Environment Variables](#environment-variables)
+		- [Setting Up Virtual Environment](#setting-up-virtual-environment)
+		- [Database Setup](#database-setup)
+		- [Running the Server](#running-the-server)
+	- [API Documentation](#api-documentation)
+		- [User Authentication](#user-authentication)
+			- [Register User](#register-user)
+			- [Login and Get Token](#login-and-get-token)
+		- [CRUD Operations for Tasks (Bearer Token Authentication)](#crud-operations-for-tasks-bearer-token-authentication)
+	- [CRUD Operations for Tasks (Bearer Token Authentication)](#crud-operations-for-tasks-bearer-token-authentication-1)
+			- [Retrieve List of Tasks](#retrieve-list-of-tasks)
+			- [Create a New Task](#create-a-new-task)
+			- [Retrieve Task Details](#retrieve-task-details)
+			- [Update Task](#update-task)
+			- [Delete Task](#delete-task)
 
-## Setup
+## Project Setup Guide
 
-- [https://www.geeksforgeeks.org/how-to-use-tailwind-css-with-django/](https://www.geeksforgeeks.org/how-to-use-tailwind-css-with-django/)
-- [https://testdriven.io/blog/django-htmx-tailwind/](https://testdriven.io/blog/django-htmx-tailwind/)
-- [https://flowbite.com/docs/getting-started/django/](https://flowbite.com/docs/getting-started/django/)
+### Prerequisites
+- Ensure you have `pipenv` and `node.js` installed on your computer.
 
+### Environment Variables
+1. Copy the content of `.env.example`.
+
+2. Create a new file named `.env` in the project root.
+
+3. Paste the copied content into `.env`.
+
+4. Replace `your_secret_key` with your actual secret key and `db_url_string` with a valid PostgreSQL database URL (e.g., `postgresql://username:password@host:port/database`).
+
+### Setting Up Virtual Environment
+1. Create a virtual environment folder named `.venv`:
+    ```bash
+    mkdir .venv
+    ```
+
+2. Install `pnpm` globally:
+    ```bash
+    npm install -g pnpm
+    ```
+
+3. Install Python dependencies:
+    ```bash
+    pnpm install
+    pipenv install
+    ```
+
+### Database Setup
+
+1. Run migrations:
+    ```bash
+    pipenv shell
+    python manage.py migrate
+    ```
+
+2. Create a superuser:
+    ```bash
+    python manage.py createsuperuser --username <username> --email <email>
+    ```
+
+### Running the Server
+
+Run the Django development server:
 ```bash
-pnpm init
-pnpm install -D tailwindcss
-npx tailwindcss init
-mkdir .venv
-pipenv install django django-compressor django-browser-reload django-extensions ipython bpython
 pipenv shell
-# using venv...
-# python -m venv .venv
-# .\.venv\Scripts\activate
-```
-
-```bash
-django-admin startproject core .
-python manage.py makemigrations
-python manage.py migrate
 python manage.py runserver
 ```
 
-### Tailwindcss
+Now you can access the Django admin interface at `http://localhost:8000/admin/` and your application at `http://localhost:8000/`
 
-Requirements:`Django Compressor`
+## API Documentation
 
-Django Compressor is an extension designed for managing (compressing/caching) static assets in a Django application. With it, you create a simple asset pipeline for:
+### User Authentication
 
-- Combining and minifying multiple CSS and JavaScript files down to a single file for each
-- Creating asset bundles for use in your templates
+#### Register User
+- **URL:** `/api/users/register/`
+- **Method:** POST
+- **Description:** Register a new user.
+- **Request Body:**
+  - `username` (string): User's username.
+  - `email` (string): User's email.
+  - `password` (string): User's password.
 
+#### Login and Get Token
+- **URL:** `/api/users/login/`
+- **Method:** POST
+- **Description:** Log in a user and receive an authentication token.
+- **Request Body:**
+  - `username` (string): User's username.
+  - `password` (string): User's password.
+- **Response:**
+  - `Token` (string): Authentication token for the logged-in user.
 
-1. Add `compressor` to the installed apps inside the `settings.py` file:
+### CRUD Operations for Tasks (Bearer Token Authentication)
 
+> Include the obtained token in the request headers with the format: `Token <your_token>`.
 
-```python
-# config/settings.py
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'compressor',  # new
-]
-```
+## CRUD Operations for Tasks (Bearer Token Authentication)
 
-2. Configure the `compressor` inside the `settings.py` file:
+Include the obtained token in the request headers with the format: `Bearer <your_token>`.
 
+#### Retrieve List of Tasks
+- **URL:** `/api/tasks/`
+- **Method:** GET
+- **Permission:** Authenticated Users
+- **Description:** Retrieve a list of tasks owned by the authenticated user.
 
-```python
-# default / The list of finder backends that know how to find static files in various locations.
-STATICFILES_FINDERS = [
-    "django.contrib.staticfiles.finders.FileSystemFinder",
-    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-]
+#### Create a New Task
+- **URL:** `/api/tasks/`
+- **Method:** POST
+- **Permission:** Authenticated Users
+- **Description:** Create a new task for the authenticated user.
+- **Request Body:**
+  - `title` (string): Task title.
+  - `description` (string): Task description.
+  - `due_date` (string, format: "YYYY-MM-DDTHH:mm"): Due date and time of the task.
+  - `priority` (string): Priority level of the task (e.g., "low", "medium", "high").
+  - `is_complete` (boolean): Task completion status (true or false).
 
-# django-compressor
-COMPRESS_ROOT = BASE_DIR / "static"
-COMPRESS_ENABLED = True
-STATICFILES_FINDERS += ["compressor.finders.CompressorFinder"]
+#### Retrieve Task Details
+- **URL:** `/api/tasks/<pk>/`
+- **Method:** GET
+- **Permission:** Authenticated Users
+- **Description:** Retrieve details of a specific task owned by the authenticated user.
 
-```
+#### Update Task
+- **URL:** `/api/tasks/<pk>/`
+- **Method:** PUT/PATCH
+- **Permission:** Authenticated Users
+- **Description:** Update details of a specific task owned by the authenticated user.
+- **Request Body:**
+  - `title` (string): Updated task title.
+  - `description` (string): Updated task description.
+  - `due_date` (string, format: "YYYY-MM-DDTHH:mm"): Updated due date and time.
+  - `priority` (string): Updated priority level (e.g., "low", "medium", "high").
+  - `is_complete` (boolean): Updated task completion status (true or false).
 
-3. Enable root-level templates :create a new `templates/` directory inside the project folder and update `settings.py` folder:
-
-```python
-# config/settings.py
-TEMPLATES = [
-    {
-        ...
-        'DIRS': [BASE_DIR / 'templates'], # new
-        ...
-    },
-]
-```
-
-4. Create two new folders and an `input.css` file inside the `static/src/` folder:
-
-```css
-/* static/src/input.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-```
-
-
-5. Update `tailwind.config.js` like so:
-
-
-```typescript
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-	content: [
-		// Templates within theme app (e.g. base.html)
-		'./templates/**/*.html',
-		// Templates in other apps
-		'./../templates/**/*.html'
-		// // Include JavaScript files that might contain Tailwind CSS classes
-		// '../../**/*.js',
-		// // Include Python files that might contain Tailwind CSS classes
-		// '../../**/*.py'
-	],
-	theme: {
-		extend: {}
-	},
-	plugins: []
-};
-```
-
-6. Run the following command to watch for changes and compile the Tailwind CSS code:
-
-```json
-"scripts": {
-	"dev:css": "tailwindcss -i ./static/src/input.css -o ./static/src/output.css --minify --watch"
-},
-```
-
-7. Load precessed `output.css` in `templates\_base.html`
-
-`templates\_base.html`
-
-```html
-{% load compress %} {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>{% block page_title %}Django + Tailwind CSS + HTMX{% endblock page_title %}</title>
-		{% compress css %}
-		<link rel="stylesheet" href="{% static 'src/output.css' %}" />
-		<!-- HTMX start -->
-		{% endcompress %}
-	</head>
-	<body>
-		{% block content %} {% endblock content %}
-	</body>
-</html>
-```
-
-
-### HTMX
-
-1. Download `https://unpkg.com/htmx.org@1.9.10/dist/htmx.js` and save to `static/src`
-2. Load `htmx.js` in `_base.html` also set header to use crf_token
-
-
-`templates\_base.html`
-
-```html
-{% load compress %} {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>{% block page_title %}Django + Tailwind CSS + HTMX{% endblock page_title %}</title>
-		{% compress css %}
-		<link rel="stylesheet" href="{% static 'src/output.css' %}" />
-		{% endcompress %}
-		<!-- HTMX start -->
-		{% compress js %}
-		<script type="text/javascript" src="{% static 'src/htmx.js' %}"></script>
-		{% endcompress %}
-		<!-- HTMX end-->
-	</head>
-	<body>
-		{% block content %} {% endblock content %}
-		<!-- HTMX start -->
-
-		<script>
-			document.body.addEventListener('htmx:configRequest', (event) => {
-				event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
-			});
-		</script>
-		<!-- HTMX end-->
-	</body>
-</html>
-```
+#### Delete Task
+- **URL:** `/api/tasks/<pk>/`
+- **Method:** DELETE
+- **Permission:** Authenticated Users
+- **Description:** Delete a specific task owned by the authenticated user.
 
