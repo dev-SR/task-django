@@ -5,7 +5,7 @@ from .api.views import TaskViewSet
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
-router.register(r'tasks', TaskViewSet, basename='task')
+router.register(r'tasks', TaskViewSet, basename='task_api')
 urlpatterns = [
     path('', views.TaskList.as_view(), name='task-list'),
     path('task/create/', views.CreateTaskView.as_view(), name='task-create'),
