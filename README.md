@@ -12,7 +12,6 @@
     - [User Authentication](#user-authentication)
       - [Register User](#register-user)
       - [Login and Get Token](#login-and-get-token)
-    - [CRUD Operations for Tasks (Bearer Token Authentication)](#crud-operations-for-tasks-bearer-token-authentication)
   - [CRUD Operations for Tasks (Bearer Token Authentication)](#crud-operations-for-tasks-bearer-token-authentication-1)
       - [Retrieve List of Tasks](#retrieve-list-of-tasks)
       - [Create a New Task](#create-a-new-task)
@@ -113,13 +112,9 @@ This command executes the script `tasks\scripts\run_seed.py`  that creates rando
 - **Response:**
   - `Token` (string): Authentication token for the logged-in user.
 
-### CRUD Operations for Tasks (Bearer Token Authentication)
-
-> Include the obtained token in the request headers with the format: `Token <your_token>`.
-
 ## CRUD Operations for Tasks (Bearer Token Authentication)
 
-Include the obtained token in the request headers with the format: `Bearer <your_token>`.
+> Include the obtained token in the request headers with the format: `Token <your_token>` before performing CRUD operations.
 
 #### Retrieve List of Tasks
 - **URL:** `/api/tasks/`
